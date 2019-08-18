@@ -2369,11 +2369,13 @@ void preSendPreset(byte split, byte p) {
     {
       if (Split[split].midiChanMainEnabled) {
         midiSendProgramChange(p, Split[split].midiChanMain);
+        midiSendControlChange(117, p, Split[split].midiChanMain);
       }
       else {
         for (byte ch = 0; ch < 16; ++ch) {
           if (Split[split].midiChanSet[ch]) {
             midiSendProgramChange(p, ch+1);
+            midiSendControlChange(117, p, ch+1);
           }
         }
       }
@@ -2384,6 +2386,7 @@ void preSendPreset(byte split, byte p) {
     {
       if (Split[split].midiChanMainEnabled) {
         midiSendProgramChange(p, Split[split].midiChanMain);
+        midiSendControlChange(117, p, Split[split].midiChanMain);
       }
       else {
         for (byte row = 0; row < NUMROWS; ++row) {
@@ -2392,6 +2395,7 @@ void preSendPreset(byte split, byte p) {
             ch -= 16;
           }
           midiSendProgramChange(p, ch);
+          midiSendControlChange(117, p, ch);
         }
       }
       break;
@@ -2400,6 +2404,7 @@ void preSendPreset(byte split, byte p) {
     case oneChannel:
     {
       midiSendProgramChange(p, Split[split].midiChanMain);
+      midiSendControlChange(117, p, Split[split].midiChanMain);
       break;
     }
   }
