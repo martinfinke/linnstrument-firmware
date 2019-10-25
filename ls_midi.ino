@@ -2364,18 +2364,25 @@ void preSendControlChange(byte split, byte controlnum, byte v, boolean always) {
 }
 
 void preSendPreset(byte split, byte p) {
+  enum ProgramChangeCCs : byte {
+    ProgramChangeCC = 102,
+    ProgramChangeMod10CC = 103
+  };
+
   switch (Split[split].midiMode) {
     case channelPerNote:
     {
       if (Split[split].midiChanMainEnabled) {
         midiSendProgramChange(p, Split[split].midiChanMain);
-        midiSendControlChange(117, p, Split[split].midiChanMain);
+        midiSendControlChange(ProgramChangeMod10CC, p % 10, Split[split].midiChanMain);
+        midiSendControlChange(ProgramChangeCC, p, Split[split].midiChanMain);
       }
       else {
         for (byte ch = 0; ch < 16; ++ch) {
           if (Split[split].midiChanSet[ch]) {
             midiSendProgramChange(p, ch+1);
-            midiSendControlChange(117, p, ch+1);
+            midiSendControlChange(ProgramChangeCC, p, ch+1);
+            midiSendControlChange(ProgramChangeMod10CC, p % 10, ch+1);
           }
         }
       }
@@ -2386,7 +2393,8 @@ void preSendPreset(byte split, byte p) {
     {
       if (Split[split].midiChanMainEnabled) {
         midiSendProgramChange(p, Split[split].midiChanMain);
-        midiSendControlChange(117, p, Split[split].midiChanMain);
+        midiSendControlChange(ProgramChangeMod10CC, p % 10, Split[split].midiChanMain);
+        midiSendControlChange(ProgramChangeCC, p, Split[split].midiChanMain);
       }
       else {
         for (byte row = 0; row < NUMROWS; ++row) {
@@ -2395,7 +2403,8 @@ void preSendPreset(byte split, byte p) {
             ch -= 16;
           }
           midiSendProgramChange(p, ch);
-          midiSendControlChange(117, p, ch);
+          midiSendControlChange(ProgramChangeCC, p, ch);
+          midiSendControlChange(ProgramChangeMod10CC, p % 10, ch);
         }
       }
       break;
@@ -2404,7 +2413,8 @@ void preSendPreset(byte split, byte p) {
     case oneChannel:
     {
       midiSendProgramChange(p, Split[split].midiChanMain);
-      midiSendControlChange(117, p, Split[split].midiChanMain);
+      midiSendControlChange(ProgramChangeMod10CC, p % 10, Split[split].midiChanMain);
+      midiSendControlChange(ProgramChangeCC, p, Split[split].midiChanMain);
       break;
     }
   }
