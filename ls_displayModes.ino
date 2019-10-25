@@ -872,7 +872,7 @@ void paintPresetDisplay(byte side) {
     if (row >= 6) row -= 6;
     setLed(getPresetDisplayColumn(), row, color, cellOn);
   }
-  paintSplitNumericDataDisplay(side, midiPreset[side]+1, 0, false);
+  paintSplitNumericDataDisplay(side, midiPreset[side], 0, false);
 }
 
 void paintBendRangeDisplay(byte side) {
