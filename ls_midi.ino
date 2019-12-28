@@ -2290,10 +2290,42 @@ void preSendSustain(byte split, byte v) {
 
 void preSendSwitchSustain(byte whichSwitch, byte split, byte v) {
   preSendControlChange(split, Global.ccForSwitchSustain[whichSwitch], v, true);
+  sendSwitchAsMidiNote(whichSwitch, split, v);
 }
 
 void preSendSwitchCC65(byte whichSwitch, byte split, byte v) {
   preSendControlChange(split, Global.ccForSwitchCC65[whichSwitch], v, true);
+  sendSwitchAsMidiNote(whichSwitch, split, v);
+}
+
+void sendSwitchAsMidiNote(byte whichSwitch, byte split, byte v)
+{
+  byte notenum;
+  switch (whichSwitch) {
+    case SWITCH_FOOT_L:
+      notenum = 0;
+      break;
+
+    case SWITCH_FOOT_R:
+      notenum = 1;
+      break;
+      
+    case SWITCH_FOOT_B:
+      notenum = 2;
+      break;
+  }
+
+  // whichSwitch can be SWITCH_FOOT_L, SWITCH_FOOT_R, SWITCH_FOOT_B
+  // split can be LEFT or RIGHT
+  // v can be 0 or 127
+
+  static const byte channel = 16;
+  if (v > 63) {
+    midiSendNoteOn(split, notenum, /* velocity: */ 1, channel);
+  }
+  else {
+    midiSendNoteOff(split, notenum, channel);
+  }
 }
 
 void preSendControlChange(byte split, byte controlnum, byte v, boolean always) {
